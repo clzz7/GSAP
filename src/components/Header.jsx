@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { ShoppingCart, User, Menu, X, Search } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
+import gsap from 'gsap'
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -12,11 +13,42 @@ const Header = () => {
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20)
+      
+      // Advanced header animation based on scroll
+      if (window.scrollY > 100) {
+        gsap.to('.header-logo', {
+          scale: 0.9,
+          duration: 0.3,
+          ease: "power2.out"
+        })
+      } else {
+        gsap.to('.header-logo', {
+          scale: 1,
+          duration: 0.3,
+          ease: "power2.out"
+        })
+      }
     }
 
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
+
+  useEffect(() => {
+    // Cart bounce animation when count changes
+    if (cartCount > 0) {
+      gsap.fromTo('.cart-icon', 
+        { scale: 1 },
+        { 
+          scale: 1.2,
+          duration: 0.2,
+          ease: "back.out(1.7)",
+          yoyo: true,
+          repeat: 1
+        }
+      )
+    }
+  }, [cartCount])
 
   const navigation = [
     { name: 'Início', href: '/' },
@@ -33,7 +65,7 @@ const Header = () => {
       <div className="container-main">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2">
+          <Link to="/" className="header-logo flex items-center space-x-2">
             <div className="w-10 h-10 bg-gradient-to-r from-primary-black to-premium-gray rounded-card flex items-center justify-center">
               <span className="text-pure-white font-semibold text-lg">D</span>
             </div>
@@ -75,12 +107,13 @@ const Header = () => {
             </button>
 
             {/* Cart Button */}
-            <Link to="/carrinho" className="btn-icon relative">
+            <Link to="/carrinho" className="btn-icon relative cart-icon">
               <ShoppingCart size={20} />
               {cartCount > 0 && (
                 <motion.span
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
+                  transition={{ type: "spring", stiffness: 500, damping: 15 }}
                   className="absolute -top-1 -right-1 bg-error-red text-pure-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-medium"
                 >
                   {cartCount}

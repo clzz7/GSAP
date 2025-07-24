@@ -15,6 +15,7 @@
   body {
     @apply font-inter text-text-primary bg-soft-gray antialiased;
     font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+    overflow-x: hidden;
   }
   
   /* Custom scrollbar */
@@ -107,5 +108,70 @@
   
   .glass-effect {
     @apply backdrop-blur-premium bg-background-elevated bg-opacity-80 border border-border-light border-opacity-20;
+  }
+  
+  /* Advanced animations from GitHub repo */
+  .hero-bg-layer-1 {
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(255, 159, 10, 0.1) 100%);
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+  }
+  
+  .hero-bg-layer-2 {
+    background: radial-gradient(circle at 30% 70%, rgba(10, 10, 11, 0.05) 0%, transparent 50%);
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 2;
+  }
+  
+  .hero-gradient {
+    background: linear-gradient(135deg, rgba(242, 242, 247, 0.8) 0%, rgba(255, 255, 255, 0.9) 100%);
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 0;
+  }
+  
+  /* Smooth transitions for all interactive elements */
+  .btn-primary,
+  .btn-secondary,
+  .btn-icon,
+  .card-product {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  /* Enhanced hover states */
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  }
+  
+  .card-product:hover {
+    transform: translateY(-4px);
+  }
+  
+  /* Loading animation */
+  @keyframes shimmer {
+    0% {
+      background-position: -200px 0;
+    }
+    100% {
+      background-position: calc(200px + 100%) 0;
+    }
+  }
+  
+  .loading-shimmer {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200px 100%;
+    animation: shimmer 1.5s infinite;
   }
 }

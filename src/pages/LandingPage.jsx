@@ -2,35 +2,75 @@ import { useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowRight, Star, Clock, Shield, Truck } from 'lucide-react'
 import gsap from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { ScrollTrigger, TextPlugin, SplitText } from 'gsap/ScrollTrigger'
+
+// Register GSAP plugins
+gsap.registerPlugin(ScrollTrigger, TextPlugin)
 
 const LandingPage = () => {
   const heroRef = useRef(null)
   const featuresRef = useRef(null)
+  const textRef = useRef(null)
+  const imageRef = useRef(null)
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Hero animations
-      const tl = gsap.timeline()
+      // Advanced text animations like GitHub repo
+      const splitText = new SplitText(textRef.current, { type: "chars,words,lines" })
       
-      tl.fromTo('.hero-title', 
-        { opacity: 0, y: 50 },
-        { opacity: 1, y: 0, duration: 1, ease: "power2.out" }
+      // Hero timeline with sophisticated animations
+      const heroTl = gsap.timeline()
+      
+      heroTl.fromTo(splitText.chars, 
+        { 
+          opacity: 0, 
+          y: 100,
+          rotationX: -90,
+          transformOrigin: "0% 50% -50"
+        },
+        { 
+          opacity: 1, 
+          y: 0,
+          rotationX: 0,
+          duration: 1.2,
+          stagger: 0.02,
+          ease: "back.out(1.7)"
+        }
       )
       .fromTo('.hero-subtitle', 
-        { opacity: 0, y: 30 },
-        { opacity: 1, y: 0, duration: 0.8, ease: "power2.out" },
-        "-=0.5"
+        { 
+          opacity: 0, 
+          y: 50,
+          filter: "blur(10px)"
+        },
+        { 
+          opacity: 1, 
+          y: 0,
+          filter: "blur(0px)",
+          duration: 1,
+          ease: "power3.out"
+        },
+        "-=0.8"
       )
       .fromTo('.hero-cta', 
-        { opacity: 0, y: 20 },
-        { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" },
-        "-=0.3"
+        { 
+          opacity: 0, 
+          scale: 0.8,
+          y: 30
+        },
+        { 
+          opacity: 1, 
+          scale: 1,
+          y: 0,
+          duration: 0.8,
+          ease: "elastic.out(1, 0.5)"
+        },
+        "-=0.5"
       )
 
-      // Parallax effect for hero background
-      gsap.to('.hero-bg', {
-        yPercent: -50,
+      // Advanced parallax with multiple layers
+      gsap.to('.hero-bg-layer-1', {
+        yPercent: -30,
         ease: "none",
         scrollTrigger: {
           trigger: heroRef.current,
@@ -40,17 +80,128 @@ const LandingPage = () => {
         }
       })
 
-      // Features stagger animation
+      gsap.to('.hero-bg-layer-2', {
+        yPercent: -60,
+        ease: "none",
+        scrollTrigger: {
+          trigger: heroRef.current,
+          start: "top bottom",
+          end: "bottom top",
+          scrub: true
+        }
+      })
+
+      // Morphing background gradient
+      gsap.to('.hero-gradient', {
+        background: "linear-gradient(135deg, #D4AF37 0%, #FF9F0A 100%)",
+        scrollTrigger: {
+          trigger: heroRef.current,
+          start: "top center",
+          end: "bottom center",
+          scrub: true
+        }
+      })
+
+      // Advanced features animation with 3D transforms
       gsap.fromTo('.feature-card',
-        { opacity: 0, y: 60 },
+        {
+          opacity: 0,
+          y: 100,
+          rotationY: -15,
+          transformOrigin: "center center",
+          scale: 0.8
+        },
         {
           opacity: 1,
           y: 0,
-          duration: 0.8,
-          stagger: 0.2,
-          ease: "power2.out",
+          rotationY: 0,
+          scale: 1,
+          duration: 1.2,
+          stagger: {
+            amount: 0.6,
+            from: "start"
+          },
+          ease: "power3.out",
           scrollTrigger: {
             trigger: featuresRef.current,
+            start: "top 80%",
+            end: "bottom 20%",
+            toggleActions: "play none none reverse",
+            onEnter: () => {
+              gsap.to('.feature-card', {
+                boxShadow: "0 20px 40px rgba(0,0,0,0.1)",
+                duration: 0.5,
+                stagger: 0.1
+              })
+            }
+          }
+        }
+      )
+
+      // Floating elements with physics-like movement
+      gsap.to('.floating-element-1', {
+        y: -20,
+        x: 10,
+        rotation: 5,
+        duration: 3,
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut"
+      })
+
+      gsap.to('.floating-element-2', {
+        y: 15,
+        x: -8,
+        rotation: -3,
+        duration: 4,
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut",
+        delay: 1
+      })
+
+      gsap.to('.floating-element-3', {
+        y: -25,
+        x: 12,
+        rotation: 8,
+        duration: 3.5,
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut",
+        delay: 2
+      })
+
+      // Advanced scroll-triggered counter animation
+      const counters = document.querySelectorAll('.counter')
+      counters.forEach(counter => {
+        const target = parseInt(counter.getAttribute('data-target'))
+        gsap.fromTo(counter, 
+          { textContent: 0 },
+          {
+            textContent: target,
+            duration: 2,
+            ease: "power2.out",
+            snap: { textContent: 1 },
+            scrollTrigger: {
+              trigger: counter,
+              start: "top 80%",
+              toggleActions: "play none none reverse"
+            }
+          }
+        )
+      })
+
+      // Image reveal with clip-path
+      gsap.fromTo('.reveal-image',
+        {
+          clipPath: "polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%)"
+        },
+        {
+          clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)",
+          duration: 1.5,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: '.reveal-image',
             start: "top 80%",
             toggleActions: "play none none reverse"
           }
@@ -108,7 +259,7 @@ const LandingPage = () => {
         
         <div className="container-main relative z-10 text-center">
           <div className="max-w-4xl mx-auto space-y-xl">
-            <h1 className="hero-title text-display-large md:text-display-medium text-primary-black leading-tight">
+            <h1 ref={textRef} className="hero-title text-display-large md:text-display-medium text-primary-black leading-tight">
               Experiência gastronômica
               <span className="text-gradient block">premium</span>
               na sua casa
@@ -132,9 +283,13 @@ const LandingPage = () => {
         </div>
 
         {/* Floating Elements */}
-        <div className="absolute top-20 left-10 w-20 h-20 bg-accent-gold/10 rounded-full animate-pulse-soft"></div>
-        <div className="absolute bottom-32 right-16 w-16 h-16 bg-success-green/10 rounded-full animate-pulse-soft" style={{ animationDelay: '1s' }}></div>
-        <div className="absolute top-1/2 left-20 w-12 h-12 bg-warning-amber/10 rounded-full animate-pulse-soft" style={{ animationDelay: '2s' }}></div>
+        <div className="floating-element-1 absolute top-20 left-10 w-20 h-20 bg-accent-gold/20 rounded-full backdrop-blur-sm"></div>
+        <div className="floating-element-2 absolute bottom-32 right-16 w-16 h-16 bg-success-green/20 rounded-full backdrop-blur-sm"></div>
+        <div className="floating-element-3 absolute top-1/2 left-20 w-12 h-12 bg-warning-amber/20 rounded-full backdrop-blur-sm"></div>
+        
+        {/* Additional floating elements for depth */}
+        <div className="floating-element-1 absolute top-40 right-32 w-8 h-8 bg-primary-black/10 rounded-full"></div>
+        <div className="floating-element-2 absolute bottom-20 left-32 w-14 h-14 bg-accent-gold/15 rounded-full"></div>
       </section>
 
       {/* Features Section */}
@@ -148,6 +303,20 @@ const LandingPage = () => {
               Combinamos tecnologia, qualidade e paixão pela gastronomia para oferecer 
               a melhor experiência de delivery da cidade.
             </p>
+            <div className="flex justify-center space-x-8 mt-8">
+              <div className="text-center">
+                <div className="counter text-3xl font-bold text-accent-gold" data-target="1000">0</div>
+                <div className="text-sm text-text-tertiary">Pedidos Entregues</div>
+              </div>
+              <div className="text-center">
+                <div className="counter text-3xl font-bold text-accent-gold" data-target="98">0</div>
+                <div className="text-sm text-text-tertiary">% Satisfação</div>
+              </div>
+              <div className="text-center">
+                <div className="counter text-3xl font-bold text-accent-gold" data-target="25">0</div>
+                <div className="text-sm text-text-tertiary">Min Entrega</div>
+              </div>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-xl">
